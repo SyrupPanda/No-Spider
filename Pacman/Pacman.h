@@ -24,18 +24,25 @@ private:
 	Vector2* _pacmanPosition;
 	Rect* _pacmanSourceRect;
 	Texture2D* _pacmanTexture;
+	int _pacmanDirection;
+	int _pacmanFrame;
+	int _pacmanCurrentFrameTime;
 
 	// Data to represent Munchie
 	int _frameCount;
 	Rect* _munchieRect;
 	Texture2D* _munchieBlueTexture;
 	Texture2D* _munchieInvertedTexture;
+	int _munchieFrame;
+	int _munchieCurrentFrameTime;
 
 	// Position for String
 	Vector2* _stringPosition;
 
-	//speed
+	//constant
 	const float _cPacmanSpeed;
+	const int _cPacmanFrameTime;
+	const int _cMunchieFrameTime;
 
 	//Menu
 	Texture2D* _menuBackground;

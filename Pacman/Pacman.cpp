@@ -2,11 +2,14 @@
 
 #include <sstream>
 
-Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f)
+Pacman::Pacman(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), _cPacmanFrameTime(250), _cMunchieFrameTime(500)
 {
 	_frameCount = 0;
 	_paused = false;
 	_pKeyDown = false;
+	_pacmanCurrentFrameTime = 0;
+	_pacmanFrame = 0;
+	_munchieCurrentFrameTime = 0;
 
 	//Initialise important Game aspects
 	Graphics::Initialise(argc, argv, this, 1024, 768, false, 25, 25, "Pacman", 60);
@@ -32,6 +35,7 @@ void Pacman::LoadContent()
 	_pacmanTexture->Load("Textures/Pacman.tga", false);
 	_pacmanPosition = new Vector2(350.0f, 350.0f);
 	_pacmanSourceRect = new Rect(0.0f, 0.0f, 32, 32);
+	_pacmanDirection = 0;
 
 	// Load Munchie
 	_munchieBlueTexture = new Texture2D();
@@ -59,18 +63,44 @@ void Pacman::Update(int elapsedTime)
 	{
 		// Checks if D key is pressed
 		if (keyboardState->IsKeyDown(Input::Keys::D))
+		{
 			_pacmanPosition->X += _cPacmanSpeed * elapsedTime; //Moves Pacman across X axis
-
+			_pacmanDirection = 0;
+		}
 		if (keyboardState->IsKeyDown(Input::Keys::A))
+		{
 			_pacmanPosition->X -= _cPacmanSpeed * elapsedTime;
-
+			_pacmanDirection = 2;
+		}
 		if (keyboardState->IsKeyDown(Input::Keys::W))
+		{
 			_pacmanPosition->Y -= _cPacmanSpeed * elapsedTime;
-
+			_pacmanDirection = 3;
+		}
 		if (keyboardState->IsKeyDown(Input::Keys::S))
+		{
 			_pacmanPosition->Y += _cPacmanSpeed * elapsedTime;
-
+			_pacmanDirection = 1;
+		}
 		//End of movemnet
+
+		//Changes sprite of player towards direction
+		_pacmanSourceRect->Y = _pacmanSourceRect->Height * _pacmanDirection;
+
+		//Pacman animation
+		_pacmanCurrentFrameTime += elapsedTime;
+		if (_pacmanCurrentFrameTime > _cPacmanFrameTime)
+		{
+			_pacmanFrame++;
+
+			if (_pacmanFrame >= 2)
+				_pacmanFrame = 0;
+
+			_pacmanCurrentFrameTime = 0;
+		}
+
+		_pacmanSourceRect->X = _pacmanSourceRect->Width * _pacmanFrame;
+
 		//Start of off screen
 		if (_pacmanPosition->X + _pacmanSourceRect->Width > Graphics::GetViewportWidth())
 		{
@@ -119,20 +149,13 @@ void Pacman::Draw(int elapsedTime)
 	SpriteBatch::BeginDraw(); // Starts Drawing
 	SpriteBatch::Draw(_pacmanTexture, _pacmanPosition, _pacmanSourceRect); // Draws Pacman
 
-	if (_frameCount < 30)
+	if (_munchieCurrentFrameTime > _cMunchieFrameTime)
 	{
-		// Draws Red Munchie
-		SpriteBatch::Draw(_munchieInvertedTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
-
 		_frameCount++;
-	}
-	else
-	{
-		// Draw Blue Munchie
-		SpriteBatch::Draw(_munchieBlueTexture, _munchieRect, nullptr, Vector2::Zero, 1.0f, 0.0f, Color::White, SpriteEffect::NONE);
-
-		if (_frameCount >= 60)
+		if (_frameCount >= 2)
 			_frameCount = 0;
+
+		_munchieCurrentFrameTime = 0;
 	}
 	
 	//Menu
@@ -148,4 +171,5 @@ void Pacman::Draw(int elapsedTime)
 	// Draws String
 	SpriteBatch::DrawString(stream.str().c_str(), _stringPosition, Color::Green);
 	SpriteBatch::EndDraw(); // Ends Drawing
+	
 }
