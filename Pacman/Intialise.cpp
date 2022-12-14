@@ -2,14 +2,15 @@
 
 #include <sstream>
 
-Player::Player(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), _cPacmanFrameTime(250), _cMunchieFrameTime(500), rotationSpeed(0.004), angle(0)
+Player::Player(int argc, char* argv[]) : Game(argc, argv), _cBulletVelocity(2.0f), _cReloadTime(120), _cFirerate(0.5), _cMaxMagazine(6), _cHealthPickUpAmmount(5), _cAmmoPickUpAmmount(4), _cMaxAmmo(24), _cMoveSpeed(0.1f), _cPlayerFrameTime(250), _cMunchieFrameTime(500), _cRotationSpeed(0.004), angle(0)
 {
-	_frameCount = 0;
 	_paused = false;
 	_pKeyDown = false;
-	_pacmanCurrentFrameTime = 0;
-	_pacmanFrame = 0;
-	_munchieCurrentFrameTime = 0;
+	_playerCurrentFrameTime = 0;
+	_playerFrame = 0;
+	_start = true;
+	_playerAlive = true;
+	_currentAction = false;
 
 	//Initialise important Game aspects
 	Graphics::Initialise(argc, argv, this, 800, 800, false, 25, 25, "Pacman", 60);
@@ -21,28 +22,32 @@ Player::Player(int argc, char* argv[]) : Game(argc, argv), _cPacmanSpeed(0.1f), 
 
 Player::~Player()
 {
-	delete _pacmanTexture;
-	delete _pacmanSourceRect;
-	delete _munchieBlueTexture;
-	delete _munchieInvertedTexture;
-	delete _munchieRect;
+	delete _playerTexture;
+	delete _playerSourceRect;
+	delete _ammoTexture;
+	delete _ammoTexture;
+	delete _ammoRect;
 }
 
 void Player::LoadContent()
 {
 	// Load Pacman
-	_pacmanTexture = new Texture2D();
-	_pacmanTexture->Load("Textures/Pacman.tga", false);
-	_pacmanPosition = new Vector2(400.0f, 400.0f);
-	_pacmanSourceRect = new Rect(0.0f, 0.0f, 32, 32);
-	_pacmanDirection = 0;
+	_playerTexture = new Texture2D();
+	_playerTexture->Load("Textures/Player.png", false);
+	_playerPosition = new Vector2(400.0f, 400.0f);
+	_playerSourceRect = new Rect(0.0f, 0.0f, 64, 64);
 
 	// Load Munchie
-	_munchieBlueTexture = new Texture2D();
-	_munchieBlueTexture->Load("Textures/Munchie.tga", true);
-	_munchieInvertedTexture = new Texture2D();
-	_munchieInvertedTexture->Load("Textures/MunchieInverted.tga", true);
-	_munchieRect = new Rect(100.0f, 450.0f, 12, 12);
+	_ammoTexture = new Texture2D();
+	_ammoTexture->Load("Textures/Ammo.png", true);
+	_ammoRect = new Rect(0.0f, 0.0f, 16, 16);
+	_ammoPosition = new Vector2(350.0f, 350.0f);
+
+	//load bullet
+	_bulletTexture = new Texture2D();
+	_bulletTexture->Load("textures/Bullet.png", true);
+	_bulletRect = new Rect(0.0f, 0.0f, 5, 30);
+	_bulletPosition = _playerPosition;
 
 	// Set string position
 	_stringPosition = new Vector2(10.0f, 25.0f);
@@ -50,8 +55,8 @@ void Player::LoadContent()
 	//Menu
 	_menuBackground = new Texture2D();
 	_menuBackground->Load("Textures/Transparency.png", false);
-	_menuRectangle = new Rect(0.0f, 0.0f, Graphics::GetViewportWidth()/2.0f, Graphics::GetViewportHeight() / 2.0f);
-	_menuStringPosition = new Vector2(Graphics::GetViewportWidth() / 2.0f, Graphics::GetViewportHeight() / 2.0f);
+	_menuRectangle = new Rect(0.0f, 0.0f, Graphics::GetViewportWidth()/2.0f - 10, Graphics::GetViewportHeight() / 2.0f + 10);
+	_menuStringPosition = new Vector2(Graphics::GetViewportWidth() / 2.0f - 10, Graphics::GetViewportHeight() / 2.0f + 10);
 }
 
 void Player::Update(int elapsedTime)
@@ -59,127 +64,44 @@ void Player::Update(int elapsedTime)
 	// Gets the current state of the keyboard
 	Input::KeyboardState* keyboardState = Input::Keyboard::GetState();
 
-	if (!_paused)
+	if (!_start) 
 	{
-		if (keyboardState->IsKeyDown(Input::Keys::D)) 
-			angle += (rotationSpeed * elapsedTime);
-
-		if (keyboardState->IsKeyDown(Input::Keys::A))
-			angle -= (rotationSpeed * elapsedTime);
-
-		if (keyboardState->IsKeyDown(Input::Keys::W)) 
+		if (!_paused)
 		{
-			_pacmanPosition->X += sin(angle) * _cPacmanSpeed * elapsedTime;
-			_pacmanPosition->Y += cos(angle) * _cPacmanSpeed * elapsedTime;
+			Input(elapsedTime, keyboardState);
+			UpdatePlayer(elapsedTime);
+			CheckViewportCollision();
+			Action(elapsedTime, keyboardState);
 		}
-
-		if (keyboardState->IsKeyDown(Input::Keys::S))
-		{
-			_pacmanPosition->X -= sin(angle) * _cPacmanSpeed * elapsedTime;
-			_pacmanPosition->Y -= cos(angle) * _cPacmanSpeed * elapsedTime;
-		}
-		// Checks if D key is pressed
-		/*if (keyboardState->IsKeyDown(Input::Keys::D))
-		{
-			_pacmanPosition->X += _cPacmanSpeed * elapsedTime; //Moves Pacman across X axis
-			_pacmanDirection = 0;
-		}
-		if (keyboardState->IsKeyDown(Input::Keys::A))
-		{
-			_pacmanPosition->X -= _cPacmanSpeed * elapsedTime;
-			_pacmanDirection = 2;
-		}
-		if (keyboardState->IsKeyDown(Input::Keys::W))
-		{
-			_pacmanPosition->Y -= _cPacmanSpeed * elapsedTime;
-			_pacmanDirection = 3;
-		}
-		if (keyboardState->IsKeyDown(Input::Keys::S))
-		{
-			_pacmanPosition->Y += _cPacmanSpeed * elapsedTime;
-			_pacmanDirection = 1;
-		}*/
-		//End of movemnet
-
-		//Changes sprite of player towards direction
-		_pacmanSourceRect->Y = _pacmanSourceRect->Height * _pacmanDirection;
-
-		//Pacman animation
-		_pacmanCurrentFrameTime += elapsedTime;
-		if (_pacmanCurrentFrameTime > _cPacmanFrameTime)
-		{
-			_pacmanFrame++;
-
-			if (_pacmanFrame >= 2)
-				_pacmanFrame = 0;
-
-			_pacmanCurrentFrameTime = 0;
-		}
-
-		_pacmanSourceRect->X = _pacmanSourceRect->Width * _pacmanFrame;
-
-		//Start of off screen
-		if (_pacmanPosition->X + _pacmanSourceRect->Width > Graphics::GetViewportWidth())
-		{
-			_pacmanPosition->X = -32 + _pacmanSourceRect->Width;
-		}
-
-		if (_pacmanPosition->X - _pacmanSourceRect->Width < -32)
-		{
-			_pacmanPosition->X = Graphics::GetViewportWidth() - _pacmanSourceRect->Width;
-		}
-
-		if (_pacmanPosition->Y + _pacmanSourceRect->Height > Graphics::GetViewportHeight())
-		{
-			_pacmanPosition->Y = -32 + _pacmanSourceRect->Height;
-		}
-
-		if (_pacmanPosition->Y - _pacmanSourceRect->Width < -32)
-		{
-			_pacmanPosition->Y = Graphics::GetViewportHeight() - _pacmanSourceRect->Width;
-		}
-
-		_frameCount++;
+		CheckPause(keyboardState, Input::Keys::P);
 	}
-
-	//Pause switch
-	if (keyboardState->IsKeyDown(Input::Keys::P) && !_pKeyDown)
-	{
-		_pKeyDown = true;
-		_paused = !_paused;
-		
-	}
-
-	if (keyboardState->IsKeyUp(Input::Keys::P))
-	{
-		_pKeyDown = false;
-	}
-
+	CheckStart(keyboardState, Input::Keys::SPACE);
 }
 
 void Player::Draw(int elapsedTime)
 {
 	// Allows us to easily create a string
 	std::stringstream stream;
-	stream << "Pacman X: " << _pacmanPosition->X << " Y: " << _pacmanPosition->Y;
+	stream << "Pacman X: " << _playerPosition->X << " Y: " << _playerPosition->Y;
 
 	SpriteBatch::BeginDraw(); // Starts Drawing
-	SpriteBatch::Draw(_pacmanTexture, _pacmanPosition, _pacmanSourceRect); // Draws Pacman
-
-	if (_munchieCurrentFrameTime > _cMunchieFrameTime)
-	{
-		_frameCount++;
-		if (_frameCount >= 2)
-			_frameCount = 0;
-
-		_munchieCurrentFrameTime = 0;
-	}
+	SpriteBatch::Draw(_playerTexture, _playerPosition, _playerSourceRect);// Draws Pacman
+	SpriteBatch::Draw(_ammoTexture, _ammoPosition, _ammoRect);
 	
 	//Menu
 	if (_paused)
 	{
 		std::stringstream menuStream;
 		menuStream << "PAUSED!";
+
+		SpriteBatch::Draw(_menuBackground, _menuRectangle, nullptr);
+		SpriteBatch::DrawString(menuStream.str().c_str(), _menuStringPosition, Color::Red);
+	}
+
+	if (_start)
+	{
+		std::stringstream menuStream;
+		menuStream << "To START press 'SPACE'" << endl << "To PAUSE press 'P'";
 
 		SpriteBatch::Draw(_menuBackground, _menuRectangle, nullptr);
 		SpriteBatch::DrawString(menuStream.str().c_str(), _menuStringPosition, Color::Red);
