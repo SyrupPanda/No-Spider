@@ -14,19 +14,36 @@
 // Reduces the amount of typing by including all classes in S2D namespace
 using namespace S2D;
 
-// Declares the Pacman class which inherits from the Game class.
+//Structure for player
+struct protagonist
+{
+	// Data to represent Player
+	Vector2* Position;
+	Rect* SourceRect;
+	Texture2D* Texture;
+	int Frame;
+	int CurrentFrameTime;
+	bool Alive;
+};
+
+//Structure for the ammo
+struct ammo
+{
+	// Data to represent Pick-ups
+	Rect* Rect;
+	Texture2D* Texture;
+	Vector2* Position;
+};
+
+// Declares the Player class which inherits from the Game class.
 // This allows us to overload the Game class methods to help us
 // load content, draw and update our game.
 class Player : public Game
 {
-private:
-	// Data to represent Player
-	Vector2* _playerPosition;
-	Rect* _playerSourceRect;
-	Texture2D* _playerTexture;
-	int _playerFrame;
-	int _playerCurrentFrameTime;
-	bool _playerAlive;
+private:	
+	//initalise struct
+	protagonist* _player;
+	ammo* _ammo;
 
 	//movement and rotation
 	float angle;
@@ -39,11 +56,6 @@ private:
 	bool _currentAction;
 	Texture2D* _bulletTexture;
 	Rect* _bulletRect;
-
-	// Data to represent Pick-ups
-	Rect* _ammoRect;
-	Texture2D* _ammoTexture;
-	Vector2* _ammoPosition;
 
 	// Position for String
 	Vector2* _stringPosition;
@@ -74,21 +86,21 @@ private:
 	void Input(int elapsedTime, Input::KeyboardState* state) 
 	{
 		if (state->IsKeyDown(Input::Keys::D))
-			angle += (_cRotationSpeed * elapsedTime);
+			angle -= (_cRotationSpeed * elapsedTime);
 
 		if (state->IsKeyDown(Input::Keys::A))
-			angle -= (_cRotationSpeed * elapsedTime);
+			angle += (_cRotationSpeed * elapsedTime);
 
 		if (state->IsKeyDown(Input::Keys::W))
 		{
-			_playerPosition->X += sin(angle) * _cMoveSpeed * elapsedTime;
-			_playerPosition->Y += cos(angle) * _cMoveSpeed * elapsedTime;
+			_player->Position->X += sin(angle) * _cMoveSpeed * elapsedTime;
+			_player->Position->Y += cos(angle) * _cMoveSpeed * elapsedTime;
 		}
 
 		if (state->IsKeyDown(Input::Keys::S))
 		{
-			_playerPosition->X -= sin(angle) * _cMoveSpeed * elapsedTime;
-			_playerPosition->Y -= cos(angle) * _cMoveSpeed * elapsedTime;
+			_player->Position->X -= sin(angle) * _cMoveSpeed * elapsedTime;
+			_player->Position->Y -= cos(angle) * _cMoveSpeed * elapsedTime;
 		}
 	}
 	void Action(int elapsedTime, Input::KeyboardState* state)
@@ -96,7 +108,7 @@ private:
 		if (_magazineAmount > 0 && state->IsKeyDown(Input::Keys::J) && !_currentAction)
 		{
 			_currentAction = true;
-			SpriteBatch::Draw(_bulletTexture, _playerPosition, _bulletRect);
+			SpriteBatch::Draw(_bulletTexture, _player->Position, _bulletRect);
 			_bulletPosition->X += sin(angle) * _cBulletVelocity * elapsedTime;
 			_bulletPosition->Y += cos(angle) * _cBulletVelocity * elapsedTime;
 		}
@@ -130,7 +142,7 @@ private:
 			_start = !_start;
 		}
 
-		if (!_playerAlive)
+		if (!_player->Alive)
 			_gameLoop = false;
 	}
 	void CheckPause(Input::KeyboardState* state, Input::Keys key) 
@@ -147,41 +159,41 @@ private:
 	}
 	void CheckViewportCollision() 
 	{
-		if (_playerPosition->X + _playerSourceRect->Width > Graphics::GetViewportWidth())
+		if (_player->Position->X + _player->SourceRect->Width > Graphics::GetViewportWidth())
 		{
-			_playerPosition->X = Graphics::GetViewportWidth() - _playerSourceRect->Width;
+			_player->Position->X = Graphics::GetViewportWidth() - _player->SourceRect->Width;
 		}
 
-		if (_playerPosition->X - _playerSourceRect->Width < -64)
+		if (_player->Position->X - _player->SourceRect->Width < -64)
 		{
-			_playerPosition->X = -64 + _playerSourceRect->Width;
+			_player->Position->X = -64 + _player->SourceRect->Width;
 		}
 
-		if (_playerPosition->Y + _playerSourceRect->Height > Graphics::GetViewportHeight())
+		if (_player->Position->Y + _player->SourceRect->Height > Graphics::GetViewportHeight())
 		{
-			_playerPosition->Y = Graphics::GetViewportHeight() - _playerSourceRect->Width;
+			_player->Position->Y = Graphics::GetViewportHeight() - _player->SourceRect->Width;
 		}
 
-		if (_playerPosition->Y - _playerSourceRect->Width < -64)
+		if (_player->Position->Y - _player->SourceRect->Width < -64)
 		{
-			_playerPosition->Y = -64 + _playerSourceRect->Height;
+			_player->Position->Y = -64 + _player->SourceRect->Height;
 		}
 	}
 
 	//update methods
 	void UpdatePlayer(int elapsedTime) 
 	{
-		_playerCurrentFrameTime += elapsedTime;
-		if (_playerCurrentFrameTime > _cPlayerFrameTime)
+		_player->CurrentFrameTime += elapsedTime;
+		if (_player->CurrentFrameTime > _cPlayerFrameTime)
 		{
-			_playerFrame++;
+			_player->Frame++;
 
-			if (_playerFrame >= 2)
-				_playerFrame = 0;
+			if (_player->Frame >= 2)
+				_player->Frame = 0;
 
-			_playerCurrentFrameTime = 0;
+			_player->CurrentFrameTime = 0;
 		}
-		_playerSourceRect->X = _playerSourceRect->Width * _playerFrame;
+		_player->SourceRect->X = _player->SourceRect->Width * _player->Frame;
 	}
 	void UpdateMunchie(int elapsedTime);
 
