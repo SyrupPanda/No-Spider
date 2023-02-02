@@ -16,6 +16,13 @@ Player::Player(int argc, char* argv[]) : Game(argc, argv), _cBulletVelocity(2.0f
 		_ammo[i]->Frame = rand() % 1;
 	}
 
+	int n;
+	for (n = 0; n < SPIDERCOUNT; n++)
+	{
+		_spider[n] = new spider();
+		_spider[n]->Position = new Vector2((rand() % Graphics::GetViewportWidth()), (rand() % Graphics::GetViewportHeight()));
+	}
+
 	_paused = false;
 	_pKeyDown = false;
 	_player->CurrentFrameTime = 0;
@@ -38,6 +45,7 @@ Player::~Player()
 {
 	delete _player->Texture;
 	delete _player->SourceRect;
+
 	int i;
 	for (i = 0; i < AMMOCOUNT; i++)
 	{
@@ -47,6 +55,15 @@ Player::~Player()
 		delete _ammo[i];
 	}
 	delete _ammo;
+
+	int n;
+	for (n = 0; n < SPIDERCOUNT; n++)
+	{
+		delete _spider[i]->Position;
+		delete _spider[i]->Texture;
+		delete _spider[i]->SourceRect;
+		delete _spider[i];
+	}
 }
 
 void Player::LoadContent()
@@ -65,6 +82,16 @@ void Player::LoadContent()
 	{
 		_ammo[i]->Rect = new Rect(0.0f, 0.0f, 16, 16);
 		_ammo[i]->Texture = ammotexture;
+	}
+
+	//load spider
+	int n;
+	Texture2D* spiderTexture = new Texture2D();
+	spiderTexture->Load("Textures/Spider.png", true);
+	for (n = 0; n < SPIDERCOUNT; n++)
+	{
+		_spider[n]->SourceRect = new Rect(0.0f,0.0f,64,64);
+		_spider[n]->Texture = spiderTexture;
 	}
 
 	//load bullet
@@ -118,6 +145,12 @@ void Player::Draw(int elapsedTime)
 		SpriteBatch::Draw(_ammo[i]->Texture, _ammo[i]->Position, _ammo[i]->Rect);
 	}
 	
+	int n;
+	for (n = 0; n < SPIDERCOUNT; n++)
+	{
+		SpriteBatch::Draw(_spider[n]->Texture, _spider[n]->Position, _spider[n]->SourceRect);
+	}
+
 	//Menu
 	if (_paused)
 	{

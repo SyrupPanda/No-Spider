@@ -3,6 +3,7 @@
 // If Windows and not in Debug, this will run without a console window
 // You can use this to output information when debugging using cout or cerr
 #define AMMOCOUNT 7
+#define SPIDERCOUNT 12
 #ifdef WIN32 
 	#ifndef _DEBUG
 		#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
@@ -41,6 +42,19 @@ struct ammo
 	int FrameTime;
 };
 
+//structure for the spider
+struct spider
+{
+	//Data to represent the enemy
+	Vector2* Position;
+	Rect* SourceRect;
+	Texture2D* Texture;
+	int Frame;
+	int CurrentFrameTime;
+	bool Alive;
+	float Speed;
+};
+
 // Declares the Player class which inherits from the Game class.
 // This allows us to overload the Game class methods to help us
 // load content, draw and update our game.
@@ -50,6 +64,7 @@ private:
 	//initalise struct
 	protagonist* _player;
 	ammo* _ammo[AMMOCOUNT];
+	spider* _spider[SPIDERCOUNT];
 
 	//movement and rotation
 	float angle;
@@ -81,7 +96,6 @@ private:
 	const float _cPlayerSprintSpeed;
 	const float _cPlayerSprintBar;
 	const float _cPlayerSprintConsumption;
-
 
 	//Menu
 	Texture2D* _menuBackground;
@@ -154,6 +168,8 @@ private:
 		}
 	}
 
+	void CheckSpiderCollisions();
+
 	//check methods
 	void CheckStart(Input::KeyboardState* state, Input::Keys key) 
 	{
@@ -217,12 +233,13 @@ private:
 		_player->SourceRect->X = _player->SourceRect->Width * _player->Frame;
 	}
 	void UpdateMunchie(int elapsedTime);
+	void UpdateSpider();
 
 public:
-	/// <summary> Constructs the Pacman class. </summary>
+	/// <summary> Constructs the Player class. </summary>
 	Player(int argc, char* argv[]);
 
-	/// <summary> Destroys any data associated with Pacman class. </summary>
+	/// <summary> Destroys any data associated with Player class. </summary>
 	virtual ~Player();
 
 	/// <summary> All content should be loaded in this method. </summary>
