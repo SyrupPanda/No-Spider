@@ -2,15 +2,26 @@
 
 #include <sstream>
 
-Player::Player(int argc, char* argv[]) : Game(argc, argv), _cBulletVelocity(2.0f), _cReloadTime(120), _cFirerate(0.5), _cMaxMagazine(6), _cHealthPickUpAmmount(5), _cAmmoPickUpAmmount(4), _cMaxAmmo(24), _cMoveSpeed(0.1f), _cPlayerFrameTime(250), _cMunchieFrameTime(500), _cRotationSpeed(0.004), angle(0)
+Player::Player(int argc, char* argv[]) : Game(argc, argv), _cBulletVelocity(2.0f), _cReloadTime(120), _cFirerate(0.5), _cMaxMagazine(6), _cHealthPickUpAmmount(5), _cAmmoPickUpAmmount(4), _cMaxAmmo(24), _cMoveSpeed(0.1f), _cPlayerFrameTime(250), _cMunchieFrameTime(500), _cRotationSpeed(0.004), angle(0), _cPlayerSprintSpeed(1.6f), _cPlayerSprintBar(100), _cPlayerSprintConsumption(2)
 {
 	_player = new protagonist();
-	_ammo = new ammo();
+
+	int i;
+	for (i = 0; i < AMMOCOUNT; i++)
+	{
+		_ammo[i] = new ammo();
+		_ammo[i]->CurrentFrameTime = 0;
+		_ammo[i]->Position = new Vector2((rand() % Graphics::GetViewportWidth()), (rand() % Graphics::GetViewportHeight()));
+		_ammo[i]->FrameTime = rand() % 500 + 50;
+		_ammo[i]->Frame = rand() % 1;
+	}
 
 	_paused = false;
 	_pKeyDown = false;
 	_player->CurrentFrameTime = 0;
 	_player->Frame = 0;
+	_player->CurrentSprintBar = _cPlayerSprintBar;
+	_player->Speed = _cMoveSpeed;
 	_start = true;
 	_player->Alive = true;
 	_currentAction = false;
@@ -27,9 +38,15 @@ Player::~Player()
 {
 	delete _player->Texture;
 	delete _player->SourceRect;
-	delete _ammo->Texture;
-	delete _ammo->Texture;
-	delete _ammo->Rect;
+	int i;
+	for (i = 0; i < AMMOCOUNT; i++)
+	{
+		delete _ammo[i]->Position;
+		delete _ammo[i]->Texture;
+		delete _ammo[i]->Rect;
+		delete _ammo[i];
+	}
+	delete _ammo;
 }
 
 void Player::LoadContent()
@@ -41,10 +58,14 @@ void Player::LoadContent()
 	_player->SourceRect = new Rect(0.0f, 0.0f, 64, 64);
 
 	// Load Ammo packs
-	_ammo->Texture = new Texture2D();
-	_ammo->Texture->Load("Textures/Ammo.png", true);
-	_ammo->Rect = new Rect(0.0f, 0.0f, 16, 16);
-	_ammo->Position = new Vector2(350.0f, 350.0f);
+	int i;
+	Texture2D* ammotexture = new Texture2D();
+	ammotexture->Load("Textures/Ammo.png", true);
+	for (i = 0; i < AMMOCOUNT; i++)
+	{
+		_ammo[i]->Rect = new Rect(0.0f, 0.0f, 16, 16);
+		_ammo[i]->Texture = ammotexture;
+	}
 
 	//load bullet
 	_bulletTexture = new Texture2D();
@@ -66,6 +87,7 @@ void Player::Update(int elapsedTime)
 {
 	// Gets the current state of the keyboard
 	Input::KeyboardState* keyboardState = Input::Keyboard::GetState();
+	Input::MouseState* mouseState = Input::Mouse::GetState();
 
 	if (!_start) 
 	{
@@ -74,7 +96,7 @@ void Player::Update(int elapsedTime)
 			Input(elapsedTime, keyboardState);
 			UpdatePlayer(elapsedTime);
 			CheckViewportCollision();
-			Action(elapsedTime, keyboardState);
+			Action(elapsedTime, mouseState, keyboardState);
 		}
 		CheckPause(keyboardState, Input::Keys::P);
 	}
@@ -89,7 +111,12 @@ void Player::Draw(int elapsedTime)
 
 	SpriteBatch::BeginDraw(); // Starts Drawing
 	SpriteBatch::Draw(_player->Texture, _player->Position, _player->SourceRect);// Draws Pacman
-	SpriteBatch::Draw(_ammo->Texture, _ammo->Position, _ammo->Rect);
+
+	int i;
+	for (i = 0; i < AMMOCOUNT; i++)
+	{
+		SpriteBatch::Draw(_ammo[i]->Texture, _ammo[i]->Position, _ammo[i]->Rect);
+	}
 	
 	//Menu
 	if (_paused)

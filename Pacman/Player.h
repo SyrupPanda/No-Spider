@@ -2,6 +2,7 @@
 
 // If Windows and not in Debug, this will run without a console window
 // You can use this to output information when debugging using cout or cerr
+#define AMMOCOUNT 7
 #ifdef WIN32 
 	#ifndef _DEBUG
 		#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
@@ -24,6 +25,8 @@ struct protagonist
 	int Frame;
 	int CurrentFrameTime;
 	bool Alive;
+	float CurrentSprintBar;
+	float Speed;
 };
 
 //Structure for the ammo
@@ -33,6 +36,9 @@ struct ammo
 	Rect* Rect;
 	Texture2D* Texture;
 	Vector2* Position;
+	int CurrentFrameTime;
+	int Frame;
+	int FrameTime;
 };
 
 // Declares the Player class which inherits from the Game class.
@@ -43,7 +49,7 @@ class Player : public Game
 private:	
 	//initalise struct
 	protagonist* _player;
-	ammo* _ammo;
+	ammo* _ammo[AMMOCOUNT];
 
 	//movement and rotation
 	float angle;
@@ -72,6 +78,10 @@ private:
 	const float _cFirerate;
 	const float _cReloadTime;
 	const int _cHealthPickUpAmmount;
+	const float _cPlayerSprintSpeed;
+	const float _cPlayerSprintBar;
+	const float _cPlayerSprintConsumption;
+
 
 	//Menu
 	Texture2D* _menuBackground;
@@ -85,34 +95,45 @@ private:
 	//input methods
 	void Input(int elapsedTime, Input::KeyboardState* state) 
 	{
+		if (state->IsKeyDown(Input::Keys::LEFTSHIFT) && _player->CurrentSprintBar > 0)
+		{
+			_player->Speed = _cMoveSpeed * _cPlayerSprintSpeed;
+			_player->CurrentSprintBar -= _cPlayerSprintConsumption;
+		}
+		if (!(state->IsKeyDown(Input::Keys::LEFTSHIFT)) || _player->CurrentSprintBar <= 0)
+		{
+			_player->Speed = _cMoveSpeed;
+		}
+
+		if (state->IsKeyDown(Input::Keys::W))
+		{
+			_player->Position->X += sin(angle) * _player->Speed * elapsedTime;
+			_player->Position->Y += cos(angle) * _player->Speed * elapsedTime;
+		}
+
+		if (state->IsKeyDown(Input::Keys::S))
+		{
+			_player->Position->X -= sin(angle) * _player->Speed * elapsedTime;
+			_player->Position->Y -= cos(angle) * _player->Speed * elapsedTime;
+		}
+
 		if (state->IsKeyDown(Input::Keys::D))
 			angle -= (_cRotationSpeed * elapsedTime);
 
 		if (state->IsKeyDown(Input::Keys::A))
 			angle += (_cRotationSpeed * elapsedTime);
 
-		if (state->IsKeyDown(Input::Keys::W))
-		{
-			_player->Position->X += sin(angle) * _cMoveSpeed * elapsedTime;
-			_player->Position->Y += cos(angle) * _cMoveSpeed * elapsedTime;
-		}
-
-		if (state->IsKeyDown(Input::Keys::S))
-		{
-			_player->Position->X -= sin(angle) * _cMoveSpeed * elapsedTime;
-			_player->Position->Y -= cos(angle) * _cMoveSpeed * elapsedTime;
-		}
 	}
-	void Action(int elapsedTime, Input::KeyboardState* state)
+	void Action(int elapsedTime, Input::MouseState*mouseState, Input::KeyboardState*state)
 	{
-		if (_magazineAmount > 0 && state->IsKeyDown(Input::Keys::J) && !_currentAction)
+		if (_magazineAmount > 0 && mouseState->LeftButton == Input::ButtonState::PRESSED && !_currentAction)
 		{
 			_currentAction = true;
 			SpriteBatch::Draw(_bulletTexture, _player->Position, _bulletRect);
 			_bulletPosition->X += sin(angle) * _cBulletVelocity * elapsedTime;
 			_bulletPosition->Y += cos(angle) * _cBulletVelocity * elapsedTime;
 		}
-		if (state->IsKeyDown(Input::Keys::L) && !_currentAction)
+		if (state->IsKeyDown(Input::Keys::R) && !_currentAction)
 		{
 			_currentAction = true;
 			_magazineAmount = 0;
