@@ -3,7 +3,9 @@
 // If Windows and not in Debug, this will run without a console window
 // You can use this to output information when debugging using cout or cerr
 #define AMMOCOUNT 7
+#define HEALTHCOUNT 3
 #define SPIDERCOUNT 12
+#define BULLETCOUNT 20
 #ifdef WIN32 
 	#ifndef _DEBUG
 		#pragma comment(linker, "/SUBSYSTEM:windows /ENTRY:mainCRTStartup")
@@ -12,6 +14,7 @@
 
 // Just need to include main header file
 #include "S2D/S2D.h"
+#include <iostream>
 
 // Reduces the amount of typing by including all classes in S2D namespace
 using namespace S2D;
@@ -40,6 +43,19 @@ struct ammo
 	int CurrentFrameTime;
 	int Frame;
 	int FrameTime;
+	bool Alive;
+};
+
+struct health
+{
+	// Data to represent Pick-ups
+	Rect* Rect;
+	Texture2D* Texture;
+	Vector2* Position;
+	int CurrentFrameTime;
+	int Frame;
+	int FrameTime;
+	bool Alive;
 };
 
 //structure for the spider
@@ -53,6 +69,28 @@ struct spider
 	int CurrentFrameTime;
 	bool Alive;
 	float Speed;
+	Vector2* Direction;
+};
+
+struct bullet
+{
+	Vector2* Position;
+	Texture2D* Texture;
+	Rect* Rect;
+	bool Alive;
+	float Angle;
+};
+
+struct menu
+{
+	Texture2D* Background;
+	Rect* Rectangle;
+	Vector2* StringPosition;
+	Vector2* ScorePosition;
+	bool Paused;
+	bool PKeyDown;
+	bool Start;
+	bool GameLoop;
 };
 
 // Declares the Player class which inherits from the Game class.
@@ -64,22 +102,36 @@ private:
 	//initalise struct
 	protagonist* _player;
 	ammo* _ammo[AMMOCOUNT];
+	health* _health[HEALTHCOUNT];
 	spider* _spider[SPIDERCOUNT];
+	bullet* _bullet[BULLETCOUNT];
+	menu* _menu;
+
+	//sound effects
+	SoundEffect* _bite;
+	SoundEffect* _healthPickup;
+	SoundEffect* _ammoPickup;
 
 	//movement and rotation
 	float angle;
 	Vector2 point;
 
 	//gunplay
-	Vector2* _bulletPosition;
 	int _ammoAmount;
 	int _magazineAmount;
 	bool _currentAction;
-	Texture2D* _bulletTexture;
-	Rect* _bulletRect;
+	int _bulletNumber;
 
 	// Position for String
 	Vector2* _stringPosition;
+
+	//Data to hold
+	int _ammoCollected;
+	int _lives;
+	int _livesGained;
+
+	//conditions
+	bool _in;
 
 	//constant
 	const float _cMoveSpeed;
@@ -96,15 +148,8 @@ private:
 	const float _cPlayerSprintSpeed;
 	const float _cPlayerSprintBar;
 	const float _cPlayerSprintConsumption;
-
-	//Menu
-	Texture2D* _menuBackground;
-	Rect* _menuRectangle;
-	Vector2* _menuStringPosition;
-	bool _paused;
-	bool _pKeyDown;
-	bool _start;
-	bool _gameLoop;
+	const float _cPlayerSprintRegain;
+	const float _cSpiderSpeed;
 
 	//input methods
 	void Input(int elapsedTime, Input::KeyboardState* state) 
@@ -117,6 +162,10 @@ private:
 		if (!(state->IsKeyDown(Input::Keys::LEFTSHIFT)) || _player->CurrentSprintBar <= 0)
 		{
 			_player->Speed = _cMoveSpeed;
+			if (_player->CurrentSprintBar < 300)
+			{
+				_player->CurrentSprintBar += _cPlayerSprintRegain;
+			}
 		}
 
 		if (state->IsKeyDown(Input::Keys::W))
@@ -138,14 +187,16 @@ private:
 			angle += (_cRotationSpeed * elapsedTime);
 
 	}
+
 	void Action(int elapsedTime, Input::MouseState*mouseState, Input::KeyboardState*state)
 	{
 		if (_magazineAmount > 0 && mouseState->LeftButton == Input::ButtonState::PRESSED && !_currentAction)
 		{
 			_currentAction = true;
-			SpriteBatch::Draw(_bulletTexture, _player->Position, _bulletRect);
-			_bulletPosition->X += sin(angle) * _cBulletVelocity * elapsedTime;
-			_bulletPosition->Y += cos(angle) * _cBulletVelocity * elapsedTime;
+			_bullet[_bulletNumber]->Alive = true;
+			_bullet[_bulletNumber]->Position = _player->Position;
+			_bullet[_bulletNumber]->Angle = angle;
+			_bulletNumber += 1;
 		}
 		if (state->IsKeyDown(Input::Keys::R) && !_currentAction)
 		{
@@ -162,37 +213,169 @@ private:
 				_ammoAmount -= _cMaxMagazine;
 			}
 		}
-		if (state->IsKeyDown(Input::Keys::K) && !_currentAction) 
+	}
+
+	void BulletMovement(int elapsedTime)
+	{
+		int b;
+		for (b = 0; b < BULLETCOUNT; b++)
 		{
-			_currentAction = true;
+			if (_bullet[b]->Alive)
+			{
+				_bullet[b]->Position->X += sin(_bullet[b]->Angle) * _cBulletVelocity;
+				_bullet[b]->Position->Y += cos(_bullet[b]->Angle) * _cBulletVelocity;
+			}
 		}
 	}
 
-	void CheckSpiderCollisions();
+	void CheckSpiderCollisions()
+	{
+		int i = 0;
+		int bottom1 = _player->Position->Y + _player->SourceRect->Height;
+		int bottom2 = 0;
+		int left1 = _player->Position->X;
+		int left2 = 0;
+		int right1 = _player->Position->X + _player->SourceRect->Width;
+		int right2 = 0;
+		int top1 = _player->Position->Y;
+		int top2 = 0;
+
+		for (i = 0; i < SPIDERCOUNT; i++)
+		{
+			bottom2 = _spider[i]->Position->Y + _spider[i]->SourceRect->Height;
+			left2 = _spider[i]->Position->X;
+			right2 = _spider[i]->Position->X + _spider[i]->SourceRect->Width;
+			top2 = _spider[i]->Position->Y;
+
+			if ((bottom1 > top2) && (top1 < bottom2) && (right1 > left2) && (left1 < right2))
+			{
+				_player->Alive = false;
+				Audio::Play(_bite);
+				_menu->Start = true;
+				i = SPIDERCOUNT;
+			}
+		}
+	}
+
+	void CheckAmmoCollisions()
+	{
+		int i = 0;
+		int bottom1 = _player->Position->Y + _player->SourceRect->Height;
+		int bottom2 = 0;
+		int left1 = _player->Position->X;
+		int left2 = 0;
+		int right1 = _player->Position->X + _player->SourceRect->Width;
+		int right2 = 0;
+		int top1 = _player->Position->Y;
+		int top2 = 0;
+
+		for (i = 0; i < AMMOCOUNT; i++)
+		{
+			bottom2 = _ammo[i]->Position->Y + _ammo[i]->Rect->Height;
+			left2 = _ammo[i]->Position->X;
+			right2 = _ammo[i]->Position->X + _ammo[i]->Rect->Width;
+			top2 = _ammo[i]->Position->Y;
+
+			if ((bottom1 > top2) && (top1 < bottom2) && (right1 > left2) && (left1 < right2))
+			{
+				_ammo[i]->Alive = false;
+				Audio::Play(_ammoPickup);
+				i = AMMOCOUNT;
+			}
+
+		}
+	}
+
+	void CheckAmmoScore()
+	{
+		int i;
+		int s = 0;
+		for (i = 0; i < AMMOCOUNT; i++)
+		{
+			if (!_ammo[i]->Alive)
+				s += 1;
+			_ammoCollected = s;
+		}
+	}
+
+	void CheckHealthCollisions()
+	{
+		int i = 0;
+		int bottom1 = _player->Position->Y + _player->SourceRect->Height;
+		int bottom2 = 0;
+		int left1 = _player->Position->X;
+		int left2 = 0;
+		int right1 = _player->Position->X + _player->SourceRect->Width;
+		int right2 = 0;
+		int top1 = _player->Position->Y;
+		int top2 = 0;
+
+		for (i = 0; i < HEALTHCOUNT; i++)
+		{
+			bottom2 = _health[i]->Position->Y + _health[i]->Rect->Height;
+			left2 = _health[i]->Position->X;
+			right2 = _health[i]->Position->X + _health[i]->Rect->Width;
+			top2 = _health[i]->Position->Y;
+
+			if ((bottom1 > top2) && (top1 < bottom2) && (right1 > left2) && (left1 < right2))
+			{
+				_health[i]->Alive = false;
+				Audio::Play(_healthPickup);
+				i = HEALTHCOUNT;
+			}
+		}
+	}
+
+	void CheckHealthScore()
+	{
+		int i;
+		int s = 0;
+		for (i = 0; i < HEALTHCOUNT; i++)
+		{
+			if (!_health[i]->Alive)
+				s += 1;
+			_livesGained = s;
+		}
+	}
+
+	void SpiderMovement(spider* spider,int elapsedTime)
+	{
+		int targetX = _player->Position->X - spider->Position->X;
+		int targetY = _player->Position->Y - spider->Position->Y;
+
+		spider->Position->X += targetX * _cSpiderSpeed;
+		spider->Position->Y += targetY * _cSpiderSpeed;
+	}
 
 	//check methods
 	void CheckStart(Input::KeyboardState* state, Input::Keys key) 
 	{
-		if (state->IsKeyDown(key) && !_gameLoop)
+		if (state->IsKeyDown(key) && !_menu->GameLoop)
 		{
-			_gameLoop = true;
-			_start = !_start;
+			_menu->GameLoop = true;
+			_menu->Start = !_menu->Start;
 		}
 
-		if (!_player->Alive)
-			_gameLoop = false;
 	}
 	void CheckPause(Input::KeyboardState* state, Input::Keys key) 
 	{
 		//Pause switch
-		if (state->IsKeyDown(key) && !_pKeyDown)
+		if (state->IsKeyDown(key) && !_menu->PKeyDown)
 		{
-			_pKeyDown = true;
-			_paused = !_paused;
+			_menu->PKeyDown = true;
+			_menu->Paused = !_menu->Paused;
 		}
 
 		if (state->IsKeyUp(key))
-			_pKeyDown = false;
+			_menu->PKeyDown = false;
+	}
+	void CheckRespawn(Input::KeyboardState* state, Input::Keys key)
+	{
+		if (state->IsKeyDown(key) && !_player)
+		{
+			_player->Alive = true;
+			_player->Position = new Vector2(400.0f, 400.0f);
+		}
 	}
 	void CheckViewportCollision() 
 	{
@@ -201,19 +384,19 @@ private:
 			_player->Position->X = Graphics::GetViewportWidth() - _player->SourceRect->Width;
 		}
 
-		if (_player->Position->X - _player->SourceRect->Width < -64)
+		if (_player->Position->X - _player->SourceRect->Width < -(64))
 		{
-			_player->Position->X = -64 + _player->SourceRect->Width;
+			_player->Position->X = -(64) + _player->SourceRect->Width;
 		}
 
 		if (_player->Position->Y + _player->SourceRect->Height > Graphics::GetViewportHeight())
 		{
-			_player->Position->Y = Graphics::GetViewportHeight() - _player->SourceRect->Width;
+			_player->Position->Y = Graphics::GetViewportHeight() - _player->SourceRect->Height;
 		}
 
-		if (_player->Position->Y - _player->SourceRect->Width < -64)
+		if (_player->Position->Y - _player->SourceRect->Height < -(64))
 		{
-			_player->Position->Y = -64 + _player->SourceRect->Height;
+			_player->Position->Y = -(64) + _player->SourceRect->Height;
 		}
 	}
 

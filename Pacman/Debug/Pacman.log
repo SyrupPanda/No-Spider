@@ -1,46 +1,62 @@
-﻿C:\Program Files\Microsoft Visual Studio\2022\Professional\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(514,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (No Spiders.vcxproj, Pacman.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(534,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (No Spiders.vcxproj, Pacman.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Intialise.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.32.31326\include\vector(2045,41): warning C4251: 'std::vector<S2D::Input::Keys,std::allocator<S2D::Input::Keys>>::_Mypair': class 'std::_Compressed_pair<std::allocator<S2D::Input::Keys>,std::_Vector_val<std::_Simple_types<_Ty>>,true>' needs to have dll-interface to be used by clients of class 'std::vector<S2D::Input::Keys,std::allocator<S2D::Input::Keys>>'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.33.31629\include\vector(2061,41): warning C4251: 'std::vector<S2D::Input::Keys,std::allocator<S2D::Input::Keys>>::_Mypair': class 'std::_Compressed_pair<std::allocator<S2D::Input::Keys>,std::_Vector_val<std::_Simple_types<_Ty>>,true>' needs to have dll-interface to be used by clients of class 'std::vector<S2D::Input::Keys,std::allocator<S2D::Input::Keys>>'
           with
           [
               _Ty=S2D::Input::Keys
           ]
-C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.32.31326\include\vector(2045): message : see declaration of 'std::_Compressed_pair<std::allocator<S2D::Input::Keys>,std::_Vector_val<std::_Simple_types<_Ty>>,true>'
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.33.31629\include\vector(2061): message : see declaration of 'std::_Compressed_pair<std::allocator<S2D::Input::Keys>,std::_Vector_val<std::_Simple_types<_Ty>>,true>'
           with
           [
               _Ty=S2D::Input::Keys
           ]
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\S2D\Input.h(108): message : see reference to class template instantiation 'std::vector<S2D::Input::Keys,std::allocator<S2D::Input::Keys>>' being compiled
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(199,56): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(204,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(209,57): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(214,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(231,55): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Intialise.cpp(6,1): warning C4305: 'initializing': truncation from 'double' to 'const float'
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Intialise.cpp(14,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Intialise.cpp(14,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Intialise.cpp(23,87): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Intialise.cpp(23,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Intialise.cpp(57,14): warning C4156: deletion of an array expression without using the array form of 'delete'; array form substituted
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Intialise.cpp(57,14): warning C4154: deletion of an array expression; conversion to pointer supplied
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Intialise.cpp(109,117): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Intialise.cpp(109,74): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-  main.cpp
-C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.32.31326\include\vector(2045,41): warning C4251: 'std::vector<S2D::Input::Keys,std::allocator<S2D::Input::Keys>>::_Mypair': class 'std::_Compressed_pair<std::allocator<S2D::Input::Keys>,std::_Vector_val<std::_Simple_types<_Ty>>,true>' needs to have dll-interface to be used by clients of class 'std::vector<S2D::Input::Keys,std::allocator<S2D::Input::Keys>>'
-          with
-          [
-              _Ty=S2D::Input::Keys
-          ]
-C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Tools\MSVC\14.32.31326\include\vector(2045): message : see declaration of 'std::_Compressed_pair<std::allocator<S2D::Input::Keys>,std::_Vector_val<std::_Simple_types<_Ty>>,true>'
-          with
-          [
-              _Ty=S2D::Input::Keys
-          ]
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\S2D\Input.h(108): message : see reference to class template instantiation 'std::vector<S2D::Input::Keys,std::allocator<S2D::Input::Keys>>' being compiled
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(199,56): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(204,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(209,57): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(214,31): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-C:\Users\d014194m\Documents\GitHub\Breath\Pacman\Player.h(231,55): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
-  Generating Code...
-  Pacman.vcxproj -> C:\Users\d014194m\Documents\GitHub\Breath\Debug\Main.exe
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\S2D\Input.h(108): message : see reference to class template instantiation 'std::vector<S2D::Input::Keys,std::allocator<S2D::Input::Keys>>' being compiled
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(234,15): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(236,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(238,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(240,12): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(245,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(246,32): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(247,37): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(248,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(263,15): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(265,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(267,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(269,12): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(274,36): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(275,30): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(276,35): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(277,29): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(304,15): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(306,13): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(308,14): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(310,12): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(315,38): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(316,32): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(317,37): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(318,31): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(343,15): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(344,15): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(384,56): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(389,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(394,57): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(399,33): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Player.h(416,55): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(6,1): warning C4305: 'initializing': truncation from 'double' to 'const float'
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(86,14): warning C4156: deletion of an array expression without using the array form of 'delete'; array form substituted
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(86,14): warning C4154: deletion of an array expression; conversion to pointer supplied
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(96,16): warning C4156: deletion of an array expression without using the array form of 'delete'; array form substituted
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(96,16): warning C4154: deletion of an array expression; conversion to pointer supplied
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(106,16): warning C4156: deletion of an array expression without using the array form of 'delete'; array form substituted
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(106,16): warning C4154: deletion of an array expression; conversion to pointer supplied
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(116,16): warning C4156: deletion of an array expression without using the array form of 'delete'; array form substituted
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(116,16): warning C4154: deletion of an array expression; conversion to pointer supplied
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(138,85): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(138,44): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(150,87): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(150,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(163,87): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(163,46): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(191,119): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Pacman\Intialise.cpp(191,76): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Pacman.vcxproj -> C:\Users\chris\OneDrive\Documents\GAME DESIGN\FOGGS\Year 1 Semester 1\Framework\Pacman\Breath\Debug\Main.exe
